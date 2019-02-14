@@ -1,0 +1,103 @@
+---
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: run tests
+    image: alpine:3.9
+    commands:
+      - echo "running the tests!"
+    when:
+      event:
+        - push
+        - pull_request
+
+  - name: printenv
+    image: alpine:3.9
+    commands:
+      - printenv
+    when:
+      event:
+        - deployment
+        - push
+        - pull_request
+        - tag
+
+  - name: trigger-preview-deployment-from-push
+    image: fsouza/hub
+    pull: true
+    commands:
+      - ci/trigger-deploy.sh ${DRONE_BRANCH}
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    when:
+      event: push
+      branch: preview-*
+
+  - name: trigger-staging-deployment
+    image: fsouza/hub
+    pull: true
+    commands:
+      - ci/trigger-deploy.sh staging
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    when:
+      event: push
+      branch: master
+
+  - name: trigger-production-deployment
+    image: fsouza/hub
+    pull: true
+    commands:
+      - ci/trigger-deploy.sh production
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    when:
+      event: tag
+
+  - name: preview-deployment
+    image: alpine:3.9
+    commands:
+      - echo deploying to ${DRONE_DEPLOY_TO}
+      - echo preview deployments are instantaneous
+    when:
+      event: deployment
+      environment: preview-*
+
+  - name: staging-deployment
+    image: alpine:3.9
+    commands:
+      - echo deploying to staging
+      - echo this will take very long!
+      - sleep 1
+    when:
+      event: deployment
+      environment: staging
+
+  - name: production-deployment
+    image: alpine:3.9
+    commands:
+      - echo deploying to production
+      - echo this takes looong
+      - sleep 1
+    when:
+      event: deployment
+      environment: production
+
+  - name: post-deployment-metadata
+    image: fsouza/hub
+    pull: true
+    commands:
+      - ci/finish-deploy.sh
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token
+    when:
+      event: deployment

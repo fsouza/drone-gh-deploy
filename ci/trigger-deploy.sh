@@ -29,7 +29,7 @@ if [ "$status" = "0" ]; then
     ref_id=$(echo "$repo_data" | jq -r 'if .data.repository.ref then .data.repository.ref.id else .data.repository.pullRequest.headRef.id end')
 
     auto_merge=true
-    if [ "$environment" = "prd" ]; then
+    if [ "$environment" = "production" ]; then
         auto_merge=false
     fi
 
