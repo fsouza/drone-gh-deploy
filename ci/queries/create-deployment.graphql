@@ -1,0 +1,14 @@
+mutation CreateDeployment($refId: ID!, $repositoryId: ID!, $description: String!, $environment: String!, $autoMerge: Boolean!) {
+  createDeployment(input: {
+    description: $description
+    environment: $environment
+    refId: $refId
+    repositoryId: $repositoryId
+    requiredContexts: []
+    autoMerge: $autoMerge
+  }) {
+    deployment {
+      id
+    }
+  }
+}

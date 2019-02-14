@@ -1,0 +1,14 @@
+mutation UpdateDeployment($deploymentId: ID!, $description: String!, $logUrl: String!, $state: DeploymentStatusState!) {
+  createDeploymentStatus(input: {
+    autoInactive: true
+    deploymentId: $deploymentId
+    description: $description
+    logUrl: $logUrl
+    state: $state
+  }) {
+    deploymentStatus {
+      id
+      logUrl
+    }
+  }
+}

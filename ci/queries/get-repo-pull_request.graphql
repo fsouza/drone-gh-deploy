@@ -1,0 +1,10 @@
+query GetRepoAndRefPR($pullRequest: Int!, $owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
+    id
+    pullRequest(number: $pullRequest) {
+      headRef {
+        id
+      }
+    }
+  }
+}

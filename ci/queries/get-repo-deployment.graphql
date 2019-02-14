@@ -1,0 +1,15 @@
+query GetRepoDeployments($owner: String!, $name: String!, $environment: String!) {
+  repository(owner: $owner, name: $name) {
+    id
+    deployments(last: 5, environments: [$environment]) {
+      edges {
+        node {
+          id
+          latestStatus {
+            logUrl
+          }
+        }
+      }
+    }
+  }
+}
