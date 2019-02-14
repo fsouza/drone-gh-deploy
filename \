@@ -88,8 +88,8 @@ steps:
       - echo this takes looong
       - sleep 1
     when:
-      event: promote
-      target: production
+      event: deployment
+      environment: production
 
   - name: post-deployment-metadata
     image: fsouza/hub
